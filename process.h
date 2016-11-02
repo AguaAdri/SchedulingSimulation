@@ -19,12 +19,16 @@ class Process
   int priority;
   string status;
  public:
-  Process(int);
+  Process();
   int getrCpuDuration();
   int getAvgCPUB();
   void generateRIOB();
   void setCPUBurst(int);
-  int pGetId();
+  int getId();
+  int getCPUBL();
+  void setId(int);
+  int getStartTime();
+  void setTime(int);
 };
 
 #endif

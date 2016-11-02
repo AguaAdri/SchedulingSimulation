@@ -1,20 +1,33 @@
 #include "event.h"
 
+Event::Event()
+{
+}
+
 Event::Event(char typeD, int id)
 {
   type = typeD;
   procId = id;
 }
 
-void Event::getInfo()
+char Event::getType()
 {
-  cout << "Event is type: " << type << " and has process ID: " << procId << 
-    endl;
+  return type;
 }
 
 int Event::getId()
 {
   return procId;
+}
+
+void Event::setTime(int num)
+{
+  time = num;
+}
+
+int Event::getTime()
+{
+  return time;
 }
 
 bool Event::operator<(const Event& e)

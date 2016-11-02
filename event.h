@@ -11,9 +11,12 @@ class Event
   char type;
   int procId;
  public:
+  Event();
   Event(char, int);
   bool operator<(const Event& e);
   int getId();
-  void getInfo();
+  char getType();
+  void setTime(int);
+  int getTime();
 };
 #endif

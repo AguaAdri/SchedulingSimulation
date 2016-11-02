@@ -1,13 +1,10 @@
 #include "process.h"
 
-Process::Process(int id)
+Process::Process()
 {
-  srand(time(NULL));
-  processId = id;
-  //startTime = rand() % 300 + 1;
+  startTime = rand() %301 + 1;
   cpuDuration = rand() % 60 + 1;
   averageCpuBurst = rand() % 100 + 5;
-  //priority
   status = "Ready";
 }
 
@@ -26,12 +23,32 @@ void Process::setCPUBurst(int nextCPU)
   cpuBurstLength = nextCPU;
 }
 
-int Process::pGetId()
+int Process::getId()
 {
   return processId;
+}
+
+int Process::getCPUBL()
+{
+  return cpuBurstLength;
 }
 
 int Process::getAvgCPUB()
 {
   return averageCpuBurst;
+}
+
+void Process::setId(int num)
+{
+  processId = num;
+}
+
+int Process::getStartTime()
+{
+  return startTime;
+}
+
+void Process::setTime(int num)
+{
+  startTime = num;
 }

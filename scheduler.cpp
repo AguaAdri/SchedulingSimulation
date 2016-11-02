@@ -1,66 +1,83 @@
 #include "scheduler.h"
 
-Scheduler::Scheduler(int num, priority_queue<Event>& priorq)
+Scheduler::Scheduler(int num)
 {
   initProcessTable(num);
   CPUState = "idle";
-  eq = priorq;
 }
 
 void Scheduler::initProcessTable(int pAmnt)
 {
-  for(int i = 0;i < pAmnt; i++)
+  Process firstProc;
+  firstProc.setId(1);
+  firstProc.setTime(0);
+  processTable.push_back(firstProc);
+  for(int i = 0;i < pAmnt - 1; i++)
     {
-      Process temp(i + 1);
+      Process temp;
+      temp.setId(i+2);
+      cout << temp.getStartTime() << endl;
       processTable.push_back(temp);
     }
 }
 
-void Scheduler::schedule()
+void Scheduler::schedule(EBST& eq)
 {
+  cout << "in schedule" << endl;
   if(CPUState == "idle")
     {
-      Process proc = rq.front();
-      rq.pop();
-      Event e('C',proc.pGetId()); //Creates new CPU completion event
-      eq.push(e);
+      Process proc;
+      if(!rq.isEmpty())
+      rq.frontElem(proc);
+      //change state of proc to running
+      Event e('C',proc.getId()); //Creates new CPU completion event
+      e.setTime(proc.getCPUBL());
+      cout<< e.getTime();
+      eq.insertProc(e);
+      eq.displayQueue();
+      CPUState = "running";
     }
 }
 
-void Scheduler::handleProcArrival(Event e)
+void Scheduler::initializeTime(Event& e)
 {
-  //First process events will be created in a for loop, with procId being initialized with the i since the process table will be random already
-  
-  Process proc = processTable[e.getId()];
+  Process proc = processTable[e.getId() - 1];
+  e.setTime(proc.getStartTime());
+}
+
+void Scheduler::handleProcArrival(Event& e, EBST& evq)
+{
+  Process proc = processTable[e.getId() - 1]; 
   int nextBurst = CPUBurstRandom(proc.getAvgCPUB());
   proc.setCPUBurst(nextBurst);
-  rq.push(proc);
-  schedule();
+  rq.add(proc);
+  schedule(evq);
 }
 
-void Scheduler::handleCPUCompletion(Event e)
+void Scheduler::handleCPUCompletion(Event e, EBST& evq)
 {
   Process proc = processTable[e.getId()];
-  if(proc.getrCpuDuration() == 0)
-    {
-      rq.pop();
+  //  if(proc.getrCpuDuration() == 0)
+    //{
+  if(!rq.isEmpty())
+    rq.remove(proc);
       //Change status of process in the process table
-      //Should we use pointers in the first line instead to use less memory?
-    }
-  else
-    {
-      proc.generateRIOB();
-      Event IOEvent('I',proc.pGetId());
-      eq.push(IOEvent);
-    }
+      // }
+      // else
+      // {
+      // proc.generateRIOB();
+      // Event IOEvent('I',proc.getId());
+      // evq.insertProc(IOEvent);
+      // }
   CPUState = "idle";
-  schedule();
+  schedule(evq);
 }
 
-void Scheduler::handleIOCompletion(Event e)
+void Scheduler::handleIOCompletion(Event e, EBST& evq)
 {
   Process proc = processTable[e.getId()];
   int nextBurst = CPUBurstRandom(proc.getAvgCPUB());
   //setfunction
-  rq.push(proc);
+  rq.add(proc);
+  schedule(evq);
 }

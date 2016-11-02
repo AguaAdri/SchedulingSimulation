@@ -1,8 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-//USE VECTOR INSTEAD OF QUEUE
-#include <queue>
+#include "queue.h"
+#include "EReadyQueue.h"
 #include <iostream>
 #include <vector>
 #include "process.h"
@@ -14,16 +14,15 @@ class Scheduler
 {
  private:
   vector<Process>processTable;
-  queue<Process>rq; //Process ready queue
-  priority_queue<Event>eq;
+  queue rq; //Process ready queue
   string CPUState;
  public:
-  Scheduler(int, priority_queue<Event>&); //Int is how many process should be created
-  void schedule();
-  void handleProcArrival(Event);
-  void handleCPUCompletion(Event);
-  void handleIOCompletion(Event);
-  void handleTimerExpiration(Event);
+  Scheduler(int); //Int is how many process should be created
+  void schedule(EBST&);
+  void initializeTime(Event&);
+  void handleProcArrival(Event&, EBST&);
+  void handleCPUCompletion(Event, EBST&);
+  void handleIOCompletion(Event, EBST&);
   void initProcessTable(int);
 };
 
